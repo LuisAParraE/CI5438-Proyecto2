@@ -3,10 +3,8 @@ import numpy
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
-#Learnig rate
-
 #Definicion de una neurona
-class neuron:
+class Neuron:
 
     #Inicializamos los pesos de a neurona con numpy para utilizar la multiplicacion de matrices
     def __init__(self,numberWeights) -> None:
@@ -16,9 +14,6 @@ class neuron:
         self.rawValue = None
         self.activatedValue = None
         self.data = None
-
-    def localCalculation():
-        print()
 
     #Metodo para calcular el valor de la neurona 
     def calculateValue(self,data):
@@ -51,13 +46,13 @@ class neuron:
             self.weights[i] = self.weights[i] + alpha * self.weightGradient[i]
 
 #Definicion de una capa
-class layer:
+class Layer:
 
     def __init__(self,inNumber, neuronNumber) -> None:
         self.neuron = []
         
         for i in range(0, neuronNumber):
-            self.neuron.append(neuron(inNumber))
+            self.neuron.append(Neuron(inNumber))
         
         self.preLayer = None
         self.nextLayer = None
@@ -65,6 +60,7 @@ class layer:
     #Funcion que se encarga de modificar los pesos, en base a la perdida.
     def train(self, trainData, trainAnswer,alpha):
         loss = 0
+
         #Creamos un arreglo con los valores de entrada para la proxima capa
         nextLayerInput = numpy.zeros(len(self.neuron),dtype=float)
 
@@ -131,7 +127,7 @@ def dataSegmentation(df):
     solVersicolor = numpy.zeros(len(df))
     solVirginica = numpy.zeros(len(df))
     solMulticlass = numpy.zeros((len(df),3))
-
+    
     for i in range(0,len(df)):
         if df["species"].iloc[i] == "Iris-setosa":
             solSetosa[i] = 1
@@ -170,9 +166,9 @@ def fastNNCreation(inValueQuant: int, numberLayers: int, neuronForLayer: list[in
         #Si la capa es la primera en crearse, usa la cantidad de parametros de entrada, sino, la cantidad de neuronas de 
         # la capa anterior
         if i == 0:
-            allLayers.append(layer(inValueQuant,neuronForLayer[i]))
+            allLayers.append(Layer(inValueQuant,neuronForLayer[i]))
         else:
-            allLayers.append(layer(neuronForLayer[i-1],neuronForLayer[i]))
+            allLayers.append(Layer(neuronForLayer[i-1],neuronForLayer[i]))
         
     #Asigna la referencias a las capas entre ellas
     for i in range(1,len(allLayers)):
@@ -183,7 +179,7 @@ def fastNNCreation(inValueQuant: int, numberLayers: int, neuronForLayer: list[in
 
     return neuralNet
 
-def beginTraining(NN:layer, epoch:int, learningRate:float ,dataTrain, dataTrainAnswer, dataTest, dataTestAnswer):
+def beginTraining(NN:Layer, epoch:int, learningRate:float ,dataTrain, dataTrainAnswer, dataTest, dataTestAnswer):
 
     testLoss = []
     trainLoss= []
@@ -273,25 +269,17 @@ def main():
         answerTestMulticlass = numpy.array(auxAnswerTest)
 
         #Creamos la red neuronal
-        nn = fastNNCreation(5,3,[3,5,2])
-        print(len(nn.neuron))
-        print(len(nn.neuron[0].weights))
-        print(len(nn.neuron[1].weights))
-        print(len(nn.nextLayer.neuron))
-        print(len(nn.nextLayer.neuron[0].weights))
-        print(len(nn.nextLayer.neuron[1].weights))
-
-        nnTest = fastNNCreation(4,2,[2,1])
+        nnTest = fastNNCreation(4,5,[2,3,2,1,1])
 
         lossTrain,lossTest = beginTraining(nnTest,5000,0.1,dataTrainingSetosa,answerTrainingSetosa,dataTestSetosa,answerTestSetosa)
 
-        print(lossTrain[len(lossTest)-1])
-        print(lossTest[len(lossTest)-1])
+        print(nnTest.neuron[0].weights)
+        print(lossTrain[len(lossTest)-1]/120)
+        print(lossTest[len(lossTest)-1]/30)
         print(len(lossTrain))
 
     else:
         print()
     #---------------- Aca se desarrolla la parte 3---------------------#
-
 
 main()

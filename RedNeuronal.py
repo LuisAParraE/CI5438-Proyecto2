@@ -2,6 +2,7 @@ import pandas
 import numpy
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+import copy
 
 #Definicion de una neurona
 class Neuron:
@@ -161,8 +162,6 @@ def fastNNCreation(inValueQuant: int, numberLayers: int, neuronForLayer: list[in
             print ("Error Invalid Number of Neurons")
             return -2
         
-        
-
         #Si la capa es la primera en crearse, usa la cantidad de parametros de entrada, sino, la cantidad de neuronas de 
         # la capa anterior
         if i == 0:
@@ -183,16 +182,30 @@ def beginTraining(NN:Layer, epoch:int, learningRate:float ,dataTrain, dataTrainA
 
     testLoss = []
     trainLoss= []
+    bestModel = None
+    bestModelLayer = None
+    #Hacemos un entrenamiento por epocas
     for j in range(0,epoch):
         auxLoss = 0
+        #Le vamos pasando cada fila de datos al modelo
         for i in range(0,len(dataTrain)):
             if dataTrainAnswer.ndim ==1:
                 auxLoss1,auxValues = NN.train(trainData=dataTrain[i],trainAnswer=dataTrainAnswer[i:],alpha= learningRate)
             else:
                 auxLoss1,auxValues = NN.train(trainData=dataTrain[i],trainAnswer=dataTrainAnswer[i], alpha= learningRate)
+
             auxLoss = auxLoss + auxLoss1
+
+        #Guardamos la Mejor Red Neuronal hasta el momento
+        if bestModel is None or auxLoss < bestModel:
+            bestModel = auxLoss
+            bestModelLayer = copy.deepcopy(NN)
+        
+        #Guardamos el arreglo de perdidas por epoca
         trainLoss.append(auxLoss)
         auxLoss = 0
+
+        #Aca verificamos los datos del conjunto de pruebas 
         for i in range(0,len(dataTest)):
             if dataTestAnswer.ndim ==1:
                 auxLoss1,auxValues = NN.test(testData=dataTest[i],testAnswer=dataTestAnswer[i:])
@@ -202,7 +215,48 @@ def beginTraining(NN:Layer, epoch:int, learningRate:float ,dataTrain, dataTrainA
             auxLoss = auxLoss + auxLoss1
         testLoss.append(auxLoss)
 
-    return trainLoss, testLoss
+    return trainLoss, testLoss, bestModelLayer
+
+def hipAproximation(trustGrade:float, NN:Layer,data, dataAnswer):
+
+    falsePos = 0
+    truePos = 0
+    falseNeg = 0
+    trueNeg = 0
+
+    falsePosRate = 0
+    falseNegRate = 0
+
+    hipotesis = []
+    simpleAnswer = None
+
+    for i in range(0,len(dataAnswer)):
+        loss , simpleAnswer=NN.test(data[i],dataAnswer[i:])
+        hipotesis.append(simpleAnswer)
+
+    for i in range(0,len(dataAnswer)):
+        if hipotesis[i] >= trustGrade:
+            aux = 1
+        else:
+            aux = 0
+        #print(f"hip:{aux}  realVal:{dataAnswer[i]}")
+        if aux == dataAnswer[i] and aux == 1:
+            #print("True Pos")
+            truePos = truePos + 1
+        elif aux == dataAnswer[i] and aux == 0:
+            #print("True Neg")
+            trueNeg = trueNeg +1
+        elif aux != dataAnswer[i] and aux == 1:
+            #print("False Pos")
+            falsePos = falsePos +1
+        elif aux != dataAnswer[i] and aux == 0:
+            #print("False Neg")
+            falseNeg = falseNeg +1
+
+    #falsePosRate = falsePos/(falsePos+truePos)
+    #falseNegRate = falseNeg/(falseNeg+trueNeg)
+
+    return falsePos,falseNeg
 
 def main():
     case = 1
@@ -269,14 +323,49 @@ def main():
         answerTestMulticlass = numpy.array(auxAnswerTest)
 
         #Creamos la red neuronal
-        nnTest = fastNNCreation(4,5,[2,3,2,1,1])
+        nnTest = fastNNCreation(4,3,[1,2,1])
+        alpha = 0.01
+        epoch = 5000
 
-        lossTrain,lossTest = beginTraining(nnTest,5000,0.1,dataTrainingSetosa,answerTrainingSetosa,dataTestSetosa,answerTestSetosa)
+        lossTrain,lossTest, bestNN = beginTraining(nnTest,epoch,alpha,dataTrainingSetosa,answerTrainingSetosa,dataTestSetosa,answerTestSetosa)
+        falsePosTrain,falseNegTrain = hipAproximation(0.90,bestNN,dataTrainingSetosa,answerTrainingSetosa)
+        falsePosTest,falseNegTest= hipAproximation(0.90,bestNN,dataTestSetosa,answerTestSetosa)
+        
+        meanLossTrain = [x/120 for x in lossTrain]
+        meanLossTest = [x/30 for x in lossTest]
 
-        print(nnTest.neuron[0].weights)
-        print(lossTrain[len(lossTest)-1]/120)
-        print(lossTest[len(lossTest)-1]/30)
-        print(len(lossTrain))
+        print(f"Max Mean Train Loss:{max(lossTrain)/120}")
+        print(f"Max Mean Test Loss:{max(lossTest)/30}")
+        print(f"Min Mean Train Loss:{min(lossTrain)/120}")
+        print(f"Min Mean Test Loss:{min(lossTest)/30}")
+        print(f"False Positive Train Count:{falsePosTrain}")
+        print(f"False Negative Train Count:{falseNegTrain}")
+        print(f"False Positive Test Count:{falsePosTest}")
+        print(f"False Negative Test Count:{falseNegTest}")
+
+        #plt.plot(lossTrain)
+        #plt.title(f"Train loss with alpha:{alpha}")
+        #plt.ylabel("Loss")
+        #plt.xlabel("Epoch")
+        #plt.show()
+
+        #plt.plot(lossTest)
+        #plt.title(f"Test loss with alpha:{alpha}")
+        #plt.ylabel("Loss")
+        #plt.xlabel("Epoch")
+        #plt.show()
+
+        plt.plot(meanLossTrain)
+        plt.title(f"Mean Train loss with alpha:{alpha}")
+        plt.ylabel("Mean Loss")
+        plt.xlabel("Epoch")
+        plt.show()
+
+        plt.plot(meanLossTest)
+        plt.title(f"Mean Test loss with alpha:{alpha}")
+        plt.ylabel("Mean Loss")
+        plt.xlabel("Epoch")
+        plt.show()
 
     else:
         print()

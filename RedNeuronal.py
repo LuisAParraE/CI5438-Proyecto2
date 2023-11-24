@@ -259,7 +259,7 @@ def hipAproximation(trustGrade:float, NN:Layer,data, dataAnswer):
     return falsePos,falseNeg
 
 def main():
-    case = 1
+    case = 2
     if case ==1:
         #Se lee el CSV con pandas
         dfPlantas = pandas.read_csv('iris.csv')
@@ -368,7 +368,71 @@ def main():
         plt.show()
 
     else:
-        print()
-    #---------------- Aca se desarrolla la parte 3---------------------#
+        dfSpam = pandas.read_csv('spambase/spambase.csv',decimal=".",header=0)
+        dfSpam.astype(float)
+        dfSpamBin = dfSpam.drop(columns=["is_spam"])
+        isSpamCol = dfSpam["is_spam"]
+
+        """ spam = dfSpam[dfSpam['spam_or_not'] == 1]
+        ham = dfSpam[dfSpam['spam_or_not'] == 0]
+
+        spam_train, spam_test = train_test_split(spam, train_size=0.7)
+        ham_train, ham_test = train_test_split(ham,train_size=0.7)
+
+        X_train = ham_train._append(spam_train)
+        y_train = X_train.pop('spam_or_not')
+
+        X_test = ham_test._append(spam_test)
+        y_test = X_test.pop('spam_or_not')
+
+        print(X_train)
+
+        print(y_train)"""
+        # Normalizamos todas las columnas
+        for elem in dfSpamBin:
+            dfSpamBin[elem] = pandas.to_numeric(dfSpamBin[elem])
+        for elem in dfSpamBin:
+            dfSpamBin[elem] = (dfSpamBin[elem] - dfSpamBin[elem].min())/(dfSpamBin[elem].max() - dfSpamBin[elem].min())
+        #dfSpamNormalized = (dfSpamBin - dfSpamBin.min())/(dfSpamBin.max()-dfSpamBin.min())
+        auxDataTraining, auxDataTest, auxAnswerTraining, auxAnswerTest = train_test_split(
+            dfSpamBin, isSpamCol,test_size= 0.3,shuffle=True
+        )
+        
+        dataTraining = numpy.array(auxDataTraining)
+        dataTest = numpy.array(auxDataTest)
+        answerTraining = numpy.array(auxAnswerTraining)
+        answerTest = numpy.array(auxAnswerTest)
+        capas = 2
+        capasNeurona = [4,1]
+        alpha = 0.01
+        learningRate = 0.70
+        for i in [500,1000,2500,5000]:
+            epoch = i
+            nnTest = fastNNCreation(57,capas,capasNeurona)
+            lossTrain,lossTest, bestNN = beginTraining(nnTest,epoch,alpha,dataTraining,answerTraining,dataTest,answerTest)
+            falsePosTrain,falseNegTrain = hipAproximation(learningRate,bestNN,dataTraining,answerTraining)
+            falsePosTest,falseNegTest= hipAproximation(learningRate,bestNN,dataTest,answerTest)
+            meanLossTrain = [x/len(dataTraining) for x in lossTrain]
+            meanLossTest = [x/len(dataTest) for x in lossTest]
+            """ print(f"Max Mean Train Loss:{max(lossTrain)/len(dataTraining)}")
+            print(f"Max Mean Test Loss:{max(lossTest)/len(dataTest)}")
+            print(f"Min Mean Train Loss:{min(lossTrain)/len(dataTraining)}")
+            print(f"Min Mean Test Loss:{min(lossTest)/len(dataTest)}")
+            print(f"False Positive Train Count:{falsePosTrain}")
+            print(f"False Negative Train Count:{falseNegTrain}")
+            print(f"False Positive Test Count:{falsePosTest}")
+            print(f"False Negative Test Count:{falseNegTest}") """
+            print(f"{epoch},{capas},{capasNeurona},{learningRate},{min(lossTrain)/len(dataTraining)},{max(lossTrain)/len(dataTraining)},{falsePosTrain},{falseNegTrain},{min(lossTest)/len(dataTest)},{max(lossTest)/len(dataTest)},{falseNegTest},{falsePosTest}",file=open('outputs.csv', 'a'))
+            plt.plot(meanLossTrain)
+            plt.title(f"Mean Train loss with alpha:{alpha} and {capasNeurona} in {capas} capes - LR: {learningRate}")
+            plt.ylabel("Mean Loss")
+            plt.xlabel("Epoch")
+            plt.savefig(f'capas_{capas}_capasN_{capasNeurona}_mean_train_alpha_{alpha}_epoch_{epoch}_LR_{learningRate}.png')
+            plt.close()
+            plt.plot(meanLossTest)
+            plt.title(f"Mean Test loss with alpha:{alpha} and {capasNeurona} in {capas} capes - LR: {learningRate}")
+            plt.ylabel("Mean Loss")
+            plt.xlabel("Epoch")
+            plt.savefig(f'capas_{capas}_capasN_{capasNeurona}_mean_test_alpha_{alpha}_epoch_{epoch}_LR_{learningRate}.png')
 
 main()

@@ -402,16 +402,17 @@ def main():
         dataTest = numpy.array(auxDataTest)
         answerTraining = numpy.array(auxAnswerTraining)
         answerTest = numpy.array(auxAnswerTest)
-        capas = 2
-        capasNeurona = [4,1]
-        alpha = 0.01
-        learningRate = 0.70
-        for i in [500,1000,2500,5000]:
-            epoch = i
+        capas = 3
+        capasNeurona = [2,2,1]
+        learningRate = 0.01
+        trustGrade = 0.70
+        epoch = 500
+        for i in [0.70,0.80,0.90]:
+            trustGrade = i
             nnTest = fastNNCreation(57,capas,capasNeurona)
-            lossTrain,lossTest, bestNN = beginTraining(nnTest,epoch,alpha,dataTraining,answerTraining,dataTest,answerTest)
-            falsePosTrain,falseNegTrain = hipAproximation(learningRate,bestNN,dataTraining,answerTraining)
-            falsePosTest,falseNegTest= hipAproximation(learningRate,bestNN,dataTest,answerTest)
+            lossTrain,lossTest, bestNN = beginTraining(nnTest,epoch,learningRate,dataTraining,answerTraining,dataTest,answerTest)
+            falsePosTrain,falseNegTrain = hipAproximation(trustGrade,bestNN,dataTraining,answerTraining)
+            falsePosTest,falseNegTest= hipAproximation(trustGrade,bestNN,dataTest,answerTest)
             meanLossTrain = [x/len(dataTraining) for x in lossTrain]
             meanLossTest = [x/len(dataTest) for x in lossTest]
             """ print(f"Max Mean Train Loss:{max(lossTrain)/len(dataTraining)}")
@@ -422,17 +423,18 @@ def main():
             print(f"False Negative Train Count:{falseNegTrain}")
             print(f"False Positive Test Count:{falsePosTest}")
             print(f"False Negative Test Count:{falseNegTest}") """
-            print(f"{epoch},{capas},{capasNeurona},{learningRate},{min(lossTrain)/len(dataTraining)},{max(lossTrain)/len(dataTraining)},{falsePosTrain},{falseNegTrain},{min(lossTest)/len(dataTest)},{max(lossTest)/len(dataTest)},{falseNegTest},{falsePosTest}",file=open('outputs.csv', 'a'))
+            print(f"{epoch},{capas},{capasNeurona},{trustGrade},{learningRate},{min(lossTrain)/len(dataTraining)},{max(lossTrain)/len(dataTraining)},{falsePosTrain},{falseNegTrain},{min(lossTest)/len(dataTest)},{max(lossTest)/len(dataTest)},{falseNegTest},{falsePosTest}",file=open('outputs.csv', 'a'))
             plt.plot(meanLossTrain)
-            plt.title(f"Mean Train loss with alpha:{alpha} and {capasNeurona} in {capas} capes - LR: {learningRate}")
+            plt.title(f"Mean Train loss with LR:{learningRate} and {capasNeurona} in {capas} capes - TG: {trustGrade}")
             plt.ylabel("Mean Loss")
             plt.xlabel("Epoch")
-            plt.savefig(f'capas_{capas}_capasN_{capasNeurona}_mean_train_alpha_{alpha}_epoch_{epoch}_LR_{learningRate}.png')
+            plt.savefig(f'capas_{capas}_capasN_{capasNeurona}_mean_train_LR_{learningRate}_epoch_{epoch}_TG_{trustGrade}.png')
             plt.close()
             plt.plot(meanLossTest)
-            plt.title(f"Mean Test loss with alpha:{alpha} and {capasNeurona} in {capas} capes - LR: {learningRate}")
+            plt.title(f"Mean Test loss with LR:{learningRate} and {capasNeurona} in {capas} capes - TG: {trustGrade}")
             plt.ylabel("Mean Loss")
             plt.xlabel("Epoch")
-            plt.savefig(f'capas_{capas}_capasN_{capasNeurona}_mean_test_alpha_{alpha}_epoch_{epoch}_LR_{learningRate}.png')
+            plt.savefig(f'capas_{capas}_capasN_{capasNeurona}_mean_test_LR_{learningRate}_epoch_{epoch}_TG_{trustGrade}.png')
+            plt.close()
 
 main()

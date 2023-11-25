@@ -417,38 +417,47 @@ def main():
         answerTraining = numpy.array(auxAnswerTraining)
         answerTest = numpy.array(auxAnswerTest)
         capas = 3
-        capasNeurona = [2,2,1]
-        learningRate = 0.01
+        capasNeurona = [1,1,1]
+        learningRate = 0.0001
         trustGrade = 0.70
         epoch = 500
+        #print(f"Ejecutando {capasNeurona} con {epoch} epocas a {learningRate} LR")
         for i in [0.70,0.80,0.90]:
-            trustGrade = i
-            nnTest = fastNNCreation(57,capas,capasNeurona)
-            lossTrain,lossTest, bestNN = beginTraining(nnTest,epoch,learningRate,dataTraining,answerTraining,dataTest,answerTest)
-            falsePosTrain,falseNegTrain = hipAproximation(trustGrade,bestNN,dataTraining,answerTraining)
-            falsePosTest,falseNegTest= hipAproximation(trustGrade,bestNN,dataTest,answerTest)
-            meanLossTrain = [x/len(dataTraining) for x in lossTrain]
-            meanLossTest = [x/len(dataTest) for x in lossTest]
-            """ print(f"Max Mean Train Loss:{max(lossTrain)/len(dataTraining)}")
-            print(f"Max Mean Test Loss:{max(lossTest)/len(dataTest)}")
-            print(f"Min Mean Train Loss:{min(lossTrain)/len(dataTraining)}")
-            print(f"Min Mean Test Loss:{min(lossTest)/len(dataTest)}")
-            print(f"False Positive Train Count:{falsePosTrain}")
-            print(f"False Negative Train Count:{falseNegTrain}")
-            print(f"False Positive Test Count:{falsePosTest}")
-            print(f"False Negative Test Count:{falseNegTest}") """
-            print(f"{epoch},{capas},{capasNeurona},{trustGrade},{learningRate},{min(lossTrain)/len(dataTraining)},{max(lossTrain)/len(dataTraining)},{falsePosTrain},{falseNegTrain},{min(lossTest)/len(dataTest)},{max(lossTest)/len(dataTest)},{falseNegTest},{falsePosTest}",file=open('outputs.csv', 'a'))
-            plt.plot(meanLossTrain)
-            plt.title(f"Mean Train loss with LR:{learningRate} and {capasNeurona} in {capas} capes - TG: {trustGrade}")
-            plt.ylabel("Mean Loss")
-            plt.xlabel("Epoch")
-            plt.savefig(f'capas_{capas}_capasN_{capasNeurona}_mean_train_LR_{learningRate}_epoch_{epoch}_TG_{trustGrade}.png')
-            plt.close()
-            plt.plot(meanLossTest)
-            plt.title(f"Mean Test loss with LR:{learningRate} and {capasNeurona} in {capas} capes - TG: {trustGrade}")
-            plt.ylabel("Mean Loss")
-            plt.xlabel("Epoch")
-            plt.savefig(f'capas_{capas}_capasN_{capasNeurona}_mean_test_LR_{learningRate}_epoch_{epoch}_TG_{trustGrade}.png')
-            plt.close()
+            for j in [1000,2500,5000]:
+                epoch = j
+                trustGrade = i
+                nnTest = fastNNCreation(57,capas,capasNeurona)
+                print(f"Ejecutando {capasNeurona} con {epoch} epocas a {learningRate} LR y {trustGrade} d confianza")
+                lossTrain,lossTest, bestNN = beginTraining(nnTest,epoch,learningRate,dataTraining,answerTraining,dataTest,answerTest)
+                falsePosTrain,falseNegTrain = hipAproximation(trustGrade,bestNN,dataTraining,answerTraining)
+                falsePosTest,falseNegTest= hipAproximation(trustGrade,bestNN,dataTest,answerTest)
+                meanLossTrain = [x/len(dataTraining) for x in lossTrain]
+                meanLossTest = [x/len(dataTest) for x in lossTest]
+                """ print(f"Max Mean Train Loss:{max(lossTrain)/len(dataTraining)}")
+                print(f"Max Mean Test Loss:{max(lossTest)/len(dataTest)}")
+                print(f"Min Mean Train Loss:{min(lossTrain)/len(dataTraining)}")
+                print(f"Min Mean Test Loss:{min(lossTest)/len(dataTest)}")
+                print(f"False Positive Train Count:{falsePosTrain}")
+                print(f"False Negative Train Count:{falseNegTrain}")
+                print(f"False Positive Test Count:{falsePosTest}")
+                print(f"False Negative Test Count:{falseNegTest}") """
+                layerToString = "["
+                for elemen in capasNeurona:
+                    layerToString = layerToString + str(elemen) + "-"
+                layerToString = layerToString[:len(layerToString)-1]
+                layerToString = layerToString + "]"
+                print(f"{epoch},{capas},{layerToString},{trustGrade},{learningRate},{min(lossTrain)/len(dataTraining)},{max(lossTrain)/len(dataTraining)},{falsePosTrain},{falseNegTrain},{min(lossTest)/len(dataTest)},{max(lossTest)/len(dataTest)},{falseNegTest},{falsePosTest}",file=open('outputs.csv', 'a'))
+                plt.plot(meanLossTrain)
+                plt.title(f"Mean Train loss with LR:{learningRate} and {layerToString} in {capas} capes - TG: {trustGrade}")
+                plt.ylabel("Mean Loss")
+                plt.xlabel("Epoch")
+                plt.savefig(f'capas_{capas}_capasN_{layerToString}_mean_train_LR_{learningRate}_epoch_{epoch}_TG_{trustGrade}.png')
+                plt.close()
+                plt.plot(meanLossTest)
+                plt.title(f"Mean Test loss with LR:{learningRate} and {layerToString} in {capas} capes - TG: {trustGrade}")
+                plt.ylabel("Mean Loss")
+                plt.xlabel("Epoch")
+                plt.savefig(f'capas_{capas}_capasN_{layerToString}_mean_test_LR_{learningRate}_epoch_{epoch}_TG_{trustGrade}.png')
+                plt.close()
 
 main()

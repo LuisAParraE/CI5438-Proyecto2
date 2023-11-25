@@ -259,7 +259,7 @@ def hipAproximation(trustGrade:float, NN:Layer,data, dataAnswer):
     return falsePos,falseNeg
 
 def main():
-    case = 1
+    case = 2
     if case ==1:
         #Se lee el CSV con pandas
         dfPlantas = pandas.read_csv('iris.csv')
@@ -387,21 +387,6 @@ def main():
         dfSpamBin = dfSpam.drop(columns=["is_spam"])
         isSpamCol = dfSpam["is_spam"]
 
-        """ spam = dfSpam[dfSpam['spam_or_not'] == 1]
-        ham = dfSpam[dfSpam['spam_or_not'] == 0]
-
-        spam_train, spam_test = train_test_split(spam, train_size=0.7)
-        ham_train, ham_test = train_test_split(ham,train_size=0.7)
-
-        X_train = ham_train._append(spam_train)
-        y_train = X_train.pop('spam_or_not')
-
-        X_test = ham_test._append(spam_test)
-        y_test = X_test.pop('spam_or_not')
-
-        print(X_train)
-
-        print(y_train)"""
         # Normalizamos todas las columnas
         for elem in dfSpamBin:
             dfSpamBin[elem] = pandas.to_numeric(dfSpamBin[elem])
@@ -417,7 +402,7 @@ def main():
         answerTraining = numpy.array(auxAnswerTraining)
         answerTest = numpy.array(auxAnswerTest)
         capas = 3
-        capasNeurona = [1,1,1]
+        capasNeurona = [3,3,1]
         learningRate = 0.0001
         trustGrade = 0.70
         epoch = 500

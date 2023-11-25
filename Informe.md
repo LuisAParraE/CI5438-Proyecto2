@@ -9,6 +9,8 @@ Por otra parte, _Layer_ se encarga de modelar la capa completa. En ella se guard
 
 Adicionalmente se crearon funciones adicionales para el manejo de la data y obtención de las graficas necesarias.
 
+Con la finalidad de agilizar la velocidad del manejo de la información, se emplearon las librerías de Pandas (para la lectura de datos de manera rapida y precisa) y la librería numpy para utilizar su estructura de multiplicacion de matrices y vectores.
+
 ## Parte 2 - Iris Dataset
 
 El data set contiene 3 tipos de flores, cada una con 4 parámetros numéricos siendo:
@@ -79,8 +81,8 @@ Número de iteraciones|Número de capas|Neuronas por capa|Tasa de aprendizaje|Gr
 
 Pérdida media con los casos de prueba|Pérdida media con los casos de entrenamiento
 |:-----------:|:--------------------------:|
-|<img src="plants_images/virginica_1_neuron_test_trust_0.5.png" width=400px>|<img src="plants_images/virginica_1_neuron_train_trust_0.5.png" width=400px>
-|<img src="plants_images/virginica_3_neuron_2_hidden_test_trust_0.6.png" width=400px>|<img src="plants_images/virginica_3_neuron_2_hidden_train_trust_0.6.png" width=400px>
+![Virginica 1 neurona test](plants_images/virginica_1_neuron_test_trust_0.5.png)|![Virginica 1 neurona train](plants_images/virginica_1_neuron_train_trust_0.5.png)
+|![Virginica 3 neuronas test](plants_images/virginica_3_neuron_2_hidden_test_trust_0.6.png)|![Virginica 3 Neuronas Train](plants_images/virginica_3_neuron_2_hidden_train_trust_0.6.png)
 
 ### Conclusión
 
@@ -105,13 +107,14 @@ Pérdida media con los casos de prueba|Pérdida media con los casos de entrenami
 |:-----------:|:--------------------------:|
 ![Multiclase 8 neuronas - Train](plants_images/multiclass_8_neuron_2_hidden_train_alpha_0.1.png)|![Multiclase 8 neuronas - Test](plants_images/multiclass_8_neuron_2_hidden_test_alpha_0.1.png)
 
-El identificador múltiple sufre de sobremanera para converger. Se probaron multiples capas, con diferente cantidad de neuronas, y al modelo le cuesta mucho converger, es posible que el problema se deriva en parte de la función de activación usada por el modelo. 
+El identificador múltiple sufre de sobremanera para converger. Se probaron multiples capas, con diferente cantidad de neuronas, y al modelo le cuesta mucho converger, es posible que el problema se deriva en parte de la función de activación usada por el modelo.
 
-La función sigmoide sirve muy bien para ver si un objeto cae dentro de múltiples categorías, en el dado caso de que se tenga un clasificador múltiple y no uno binario. Sin embargo, en este caso que son opciones excluyentes probablemente se desenvuelva mejor una función de activación _SoftMax_ para conseguir más fácilmente cuál de los 3 resultados es el más viable, y esto podría reducir de gran manera la pérdida media. 
+La función sigmoide sirve muy bien para ver si un objeto cae dentro de múltiples categorías, en el dado caso de que se tenga un clasificador múltiple y no uno binario. Sin embargo, en este caso que son opciones excluyentes probablemente se desenvuelva mejor una función de activación _SoftMax_ para conseguir más fácilmente cuál de los 3 resultados es el más viable, y esto podría reducir de gran manera la pérdida media.
 
 Para los resultados obtenidos, se obtuvo el mejor resultado teniendo solo 1 capa oculta, y este rendimiento tienen un 0.6% de error, bastante alto en general.
 
 ### Conclusión
+
 Es de extrañar para nosotros el porque este modelo no converge a unos valores aceptables, aunque podemos asumir que la reducción más grande del error medio de esta, se debe a que es fácil para el modelo separar las setosas del conjunto solución, no tanto como a las otras 2, que le cuesta de sobremanera sin ver ningún punto de mejora. Agregar muchas capas causa _overfitting_ por lo que se debe mantener el modelo entre un rango de 1-2 capas ocultas.
 
 ## Parte 3 - Spam dataset
@@ -124,10 +127,13 @@ De los otros 57 atributos, se tiene:
 - 6 son para la frecuencia de ciertos caracteres en el correo, como lo son los caracteres `;, (, [ !, $` y `#`.
 - 3 variables relacionadas con el conteo de letras mayúsculas en el texto, véase, la longitud más larga, cantidad de cadenas de texto escritas completamente en mayúsculas y cantidad total de letras mayúsculas en el texto.
 
+Para este dataset, se dividió la data en 70% de entrenamiento y 30% para pruebas. Así mismo, la data fue normalizada para todos los parámetros usando la función
 
-Se dividió la data en 70% de entrenamiento y 30% para pruebas. La ejecución de los casos de prueba para la parte 3 se realizó de la siguiente manera:
+$$X'=\frac{X-X_{min}}{X_{max}-X_{min}}$$
 
-Primero, se ejecutaron 500 épocas con las siguientes variaciones:
+La ejecución de los casos de prueba para la parte 3 se realizó de la siguiente manera:
+
+Primero, se ejecutaron 500 iteraciones con las siguientes variaciones:
 
 - Grado de confianza: 0.70, 0.80, 0.90.
 - Alpha: 0.01, 0.0001 y 0.0001.
@@ -161,7 +167,20 @@ Una neurona con una capa | Dos neuronas con dos capas |
 ------|----|
 ![Una neurona con una capa - 0.0001 - 0.7](images/capas_1_capasN_%5B1%5D_mean_train_LR_0.001_epoch_5000_TG_0.7.png)|![Dos neuronas con dos capas - 0.001 - 0.7](images/capas_2_capasN_%5B1-1%5D_mean_train_LR_0.001_epoch_5000_TG_0.7.png)
 
-Se puede observar similitudes para estas gráficas.
+Se puede observar similitudes para estas gráficas, sin embargo, es interesante que el caso para dos neuronas tenga tal discrepancia.
+
+Ahora bien, viendo los valores para estos 4 casos, se tiene:
+
+Número de iteraciones|Número de capas|Neuronas por capa|Grado de confianza|Tasa de aprendizaje|Mínimo del error promedio en entrenamiento|Máximo del error promedio en entrenamiento|Número de falsos positivos en el entrenamiento|Número de falsos negativos en el entrenamiento|Mínimo del error promedio en pruebas|Máximo del error promedio en pruebas|Número de falsos negativos en pruebas|Número de falsos positivos en pruebas
+---|----|---|---|---|---|---|----|----|----|---|-----|---|
+5000|1|[1]|0,7|0,001|0,0897954496315437|0,249458822197895|72|363|0,0843083229881686|0,248924406561634|149|19
+5000|1|[1]|0,8|0,001|0,0897954496315437|0,249458822197895|45|556|0,0843083229881686|0,248924406561634|218|17
+5000|1|[1]|0,9|0,001|0,0897954496315437|0,249458822197895|25|808|0,0843083229881686|0,248924406561634|325|13
+5000|2|[1-1]|0,7|0,001|0,230035170183856|0,250012246041928|46|739|0,234054518112279|0,250219146440119|314|15
+5000|2|[1-1]|0,8|0,001|0,230035170183856|0,250012246041928|0|1281|0,234054518112279|0,250219146440119|532|0
+5000|2|[1-1]|0,9|0,001|0,230035170183856|0,250012246041928|0|1281|0,234054518112279|0,250219146440119|532|0
+
+Se puede observar que el error mínimo no varía por el grado de confianza para cada caso donde se tiene la misma cantidad de neuronas, pero se observa un mejor error para el caso de una sola neurona y menores falsos positivos y negativos, que es el caso donde se diferencian los valores.
 
 ### Resultados
 
@@ -181,23 +200,12 @@ Todas las ejecuciones realizadas (alrededor de 220) se encuentran registradas en
 - Número de falsos negativos en pruebas
 - Número de falsos positivos en pruebas
 
+De todos estos experimentos, se notaron que hay casos donde si se tenía un número bajo de iteraciones por ejemplo 1000, podía converger mejor la gráfica que para el caso de 2500 o 5000 iteraciones, así se varíe el valor de $\alpha$ o la configuración de las neuronas.
 
+Para este dataset, la intención es clasificar correctamente si un correo es spam o no, y es por ello que se quiere minimizar el número de falsos positivos y de falsos negativos, esto porque no se quiere que un spam se colee a la bandeja de entrada ni tampoco un correo legítimo sea clasificado como spam.
 
+Por ello, es bueno decir que un modelo que tenga estos valores es algo que se busca. De los experimentos realizados, los que mejor se comportaron fueron interesantemente los que tenían una neurona, con $\alpha = 0.01$ y $\alpha= 0.001$.
 
+Debido al alto número de falsos negativos encontrados, los valores para los grados de confianza tomados entre 0.70, 0.80 y 0.90 no son muy buenos, y se recomienda tomar menores valores para verificar si el número de falsos negativos se reduce.
 
-Para cada experimento realizado, debe incluir tablas con:
-
-* Error promedio, mínimo y máximo en el conjunto de entrenamiento y prueba.
-
-* Cantidad de falsos positivos tanto en el conjunto de entrenamiento como de prueba. Un falso positivo en un clasificador binario es un ejemplo para el que la hipótesis incluye al ejemplo en la categoría clasificada, cuando no pertenece a ella en realidad.
-
-* Cantidad de falsos negativos tanto en el conjunto de entrenamiento como de prueba. Un falso negativo en un clasificador binario es un ejemplo para el que la hipótesis excluye de la categoría clasificada, cuando en realidad sí pertenece a ella. 
-
-
-Se requiere que realice experimentos para las siguientes topologías:
-
-* Una única neurona, variando la tasa de aprendizaje para hallar la mejor hipótesis.
-* Utilizando una capa oculta, variando la tasa de aprendizaje y probando con cuantas neuronas quiera en capa oculta.
-* Utilizando dos capas ocultas, siguiendo la misma idea.
-
-Se ra
+El clasificar spam es un arte, y aún cuando un modelo de aprendizaje pueda predecir, también existen otras características que permiten hacer una inferencia sobre si un correo es spam o no, y para ello se usa por ejemplo la función de Bayes, búsqueda de patrones, ver si el correo contiene adjuntos, etc.

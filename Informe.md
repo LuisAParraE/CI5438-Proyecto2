@@ -153,13 +153,13 @@ Mostramos por ejemplo el caso del entrenamiento de una red neuronal de una sola 
 
 Una neurona con una capa | Dos neuronas con dos capas |
 ------|----|
-|<img src="images/capas_1_capasN_%5B1%5D_mean_train_LR_0.001_epoch_5000_TG_0.8.png" width=350px>|<img src="images/capas_2_capasN_%5B1-1%5D_mean_train_LR_0.001_epoch_5000_TG_0.8.png" width=350px>
+|![Una neurona con una capa - 0.001 - 0.8](images/capas_1_capasN_%5B1%5D_mean_train_LR_0.001_epoch_5000_TG_0.8.png)|![Dos neuronas con dos capas - 0.001](images/capas_2_capasN_%5B1-1%5D_mean_train_LR_0.001_epoch_5000_TG_0.8.png)
 
 Aquí, pasa lo mismo pero con ambas con un 70% de grado de confianza, 0.001 de tasa de aprendizaje y 5000 iteraciones:
 
 Una neurona con una capa | Dos neuronas con dos capas |
 ------|----|
-|<img src="images/capas_1_capasN_%5B1%5D_mean_train_LR_0.001_epoch_5000_TG_0.7.png" width=350px>|<img src="images/capas_2_capasN_%5B1-1%5D_mean_train_LR_0.001_epoch_5000_TG_0.7.png" width=350px>
+![Una neurona con una capa - 0.0001 - 0.7](images/capas_1_capasN_%5B1%5D_mean_train_LR_0.001_epoch_5000_TG_0.7.png)|![Dos neuronas con dos capas - 0.001 - 0.7](images/capas_2_capasN_%5B1-1%5D_mean_train_LR_0.001_epoch_5000_TG_0.7.png)
 
 Se puede observar similitudes para estas gráficas.
 

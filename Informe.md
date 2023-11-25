@@ -2,7 +2,7 @@
 
 ## Parte 1 - Implementación de la Red Neuronal
 
-Para la implementación de la red neuronal se dividió en dos clases, _Neuron_ y _Layer_. 
+Para la implementación de la red neuronal se dividió en dos clases, _Neuron_ y _Layer_.
 _Neuron_ se encarga de modelar las Neuronas, en ella residen los pesos de la neurona, los datos recibidos y después de activados, estos 2 últimos utilizados para calcular las gradientes locales y actualizar los pesos.
 
 Por otra parte, _Layer_ se encarga de modelar la capa completa. En ella se guarda una referencia a la capa anterior, a la capa siguiente. En esta clase se maneja todo lo que es la data del entramiento y predicción. Además de manejarse el Backpropagation directamente acá.
@@ -12,6 +12,7 @@ Adicionalmente se crearon funciones adicionales para el manejo de la data y obte
 ## Parte 2 - Iris Dataset
 
 El data set contiene 3 tipos de flores, cada una con 4 parámetros numéricos siendo:
+
 - sepal_length
 - sepal_width
 - petal_length
@@ -22,13 +23,42 @@ Cada uno de estos, fue parametrizados para mejor manipulación de los mismos. Ad
 ## Parte 2.1 - Análisis de los Modelos Binarios
 
 ### Planta Iris Setosa
+
 Para las Setosas podemos observar que funcionan mejor el modelo Lineal y el modelo de 1 Capa oculta. Esto se debe a que es muy fácil diferenciarlas del resto del conjunto, es decir, que se puede trazar fácilmente una línea en el espacio que divida las Setosas del resto de las Iris. Todo esto se logra hasta con un 90% de confianza para los modelos de 0 y 1 capa oculta. Con grado de confianza se refiere al porcentaje que se debe alcanzar en el modelo para que se tome como verdadero. Al nosotros usar la función logística o Sigmoidal, esta coloca nuestra respuesta en un valor entre 0 y 1 por lo que al final es necesario transformarla en base a un criterio, siendo este el grado de confianza. Por otra parte, los modelos de 2 capas ocultas poseen una reducción muy drástica a la hora de predecir si es o no una Iris Setosa. Esto puede ser, a que, al ser muy parecido a una función linear, entre más grande a red, más difícil es para esta aproximarla.
 
+En la siguiente tabla se muestran los gráficos para las Setosas con $\alpha = 0.01$ y 90% de confianza.
+
+Escenario|Valores de los resultados|Pérdida media con los casos de prueba|Pérdida media con los casos de entrenamiento
+|:-----------:|:--------------------------:|:--------------------------------------:|----------------------------------------------|
+1 neurona - 10000 iteraciones|<img src="plants_images/setosa_single_neuron_results.png" width=400px> |<img src="plants_images/setosa_single_neuron_test_plot.png" width=400px>|<img src="plants_images/setosa_single_neuron_train_plot.png" width=400px>
+2 neuronas y una capa oculta|<img src="plants_images/setosa_2_neuron_1_hidden_results.png" width=400px> |<img src="plants_images/setosa_2_neuron_1_hidden_test_plot.png" width=400px>|<img src="plants_images/setosa_2_neuron_1_hidden_train_plot.png" width=400px>
+
 ### Planta Iris Versicolor
-Para las Versicolor, se tiene que lo que funciona mejor es un modelo lineal, es decir, 0 capas ocultas. Es increíble la diferencia en cuanto a las Setosas. La Iris Versicolor necesita alrededor de 60% de grados de confianza para tener comenzar a catalogar lo que deberían ser verdaderos como 1, y aun así posee varios falsos negativos y falsos positivos que se generan debido a esto. Al agregar más capas este rendimiento lo que haces es incluso decrecer más, logrando que incluso un 50% de confianza no sea eficaz. 
+
+Para las Versicolor, se tiene que lo que funciona mejor es un modelo lineal, es decir, 0 capas ocultas. Es increíble la diferencia en cuanto a las Setosas. La Iris Versicolor necesita alrededor de 60% de grados de confianza para tener comenzar a catalogar lo que deberían ser verdaderos como 1, y aun así posee varios falsos negativos y falsos positivos que se generan debido a esto. Al agregar más capas este rendimiento lo que haces es incluso decrecer más, logrando que incluso un 50% de confianza no sea eficaz.
+
+En la siguiente tabla se muestran los gráficos para las Versicolor con $\alpha = 0.01$ y $\alpha = 0.0001$ respectivamente, con 60% de confianza.
+
+
+Escenario|Valores de los resultados|Pérdida media con los casos de prueba|Pérdida media con los casos de entrenamiento
+|:-----------:|:--------------------------:|:--------------------------------------:|----------------------------------------------|
+1 neurona|<img src="plants_images/versicolor_single_neuron_results.png" width=400px> |<img src="plants_images/versicolor_single_neuron_test_plot.png" width=400px>|<img src="plants_images/versicolor_single_neuron_train_plot.png" width=400px>
+Dos capas ocultas con 1 y 2 neuronas|<img src="plants_images/versicolor_2_neuron_2_hidden_results.png" width=400px> |<img src="plants_images/versicolor_2_neuron_2_hidden_test_plot.png" width=400px>|<img src="plants_images/versicolor_2_neuron_2_hidden_train_plot.png" width=400px>
 
 ### Planta Iris Virginica
+
 Las Virginicas poseen un rendimiento algo mejor que la Versicolor. Esta puede llegar hasta un 70% de grados de confianza tanto en modelos de 0 y 1 capas ocultas. Aunque con esto general un par de falsos positivos en el camino, y no logra reconocer todas las especies correctas. Para hacer esto es necesario bajar el grado de confianza al 50%, a costa de posiblemente duplicar la cantidad de falsos positivos, siendo en el mejor caso encontrado alrededor de 28% de los datos catalogados como Positivos, realmente son negativos.
+
+Iteraciones|Neuronas|Capas|Tasa de aprendizaje|Grado de Confianza|Mínimo del error promedio en entrenamiento|Máximo del error promedio en entrenamiento|Falsos positivos entrenamiento|Falsos negativos en el entrenamiento|Mínimo del error promedio en pruebas|Máximo del error promedio en pruebas|Falsos negativos en pruebas|Falsos positivos en pruebas
+|--|--|--|--|--|--|--|--|--|--|--|--|--|
+5000|3 neuronas|2 capas|0,1|60%|0,225949102598752|0,252150396197347|7|10|0,235592648743765|0,261797327279251|7|4
+
+Pérdida media con los casos de prueba|Pérdida media con los casos de entrenamiento
+|:-----------:|:--------------------------:|
+|<img src="plants_images/virginica_1_neuron_test_trust_0.5.png" width=400px>|<img src="plants_images/virginica_1_neuron_train_trust_0.5.png" width=400px>
+
+
+
 
 ### Conclusión
 
@@ -222,21 +252,46 @@ De todas estas pruebas realizadas, se seleccionaron las que obtuvieron el mejor 
 
 Algo interesante que observamos es que el modelo con una sola neurona, tiene una convergencia buena para el hecho de tener tan pocas neuronas. A medida que se añaden neuronas el modelo empeora hasta que se llegan a 5 neuronas, cuando el modelo se vuelve a estabilizar y los gráficos dan una mejor convergencia.
 
-Mostramos por ejemplo el caso del entrenamiento de una red neuronal de una sola neurona se comporta mejor que una red de dos neuronas con dos capas, ambas con 80% de grado de aceptación, 0.001 de tasa de aprendizaje y 5000 iteraciones:
+Mostramos por ejemplo el caso del entrenamiento de una red neuronal de una sola neurona se comporta mejor que una red de dos neuronas con dos capas, ambas con 80% de grado de confianza, 0.001 de tasa de aprendizaje y 5000 iteraciones:
 
 Una neurona con una capa | Dos neuronas con dos capas |
 ------|----|
 |<img src="images/capas_1_capasN_%5B1%5D_mean_train_LR_0.001_epoch_5000_TG_0.8.png" width=350px>|<img src="images/capas_2_capasN_%5B1-1%5D_mean_train_LR_0.001_epoch_5000_TG_0.8.png" width=350px>
 
-Aquí, pasa lo mismo pero con ambas con 70% de grado de aceptación, 0.001 de tasa de aprendizaje y 5000 iteraciones:
+Aquí, pasa lo mismo pero con ambas con un 70% de grado de confianza, 0.001 de tasa de aprendizaje y 5000 iteraciones:
 
 Una neurona con una capa | Dos neuronas con dos capas |
 ------|----|
-|<img src="images/capas_1_capasN_%5B1%5D_mean_train_LR_0.001_epoch_5000_TG_0.7.png" width=350px>|<img src="images/capas_2_capasN_%5B1-1%5D_mean_test_LR_0.001_epoch_5000_TG_0.7.png" width=350px>
+|<img src="images/capas_1_capasN_%5B1%5D_mean_train_LR_0.001_epoch_5000_TG_0.7.png" width=350px>|<img src="images/capas_2_capasN_%5B1-1%5D_mean_train_LR_0.001_epoch_5000_TG_0.7.png" width=350px>
+
+Se puede observar similitudes para estas gráficas.
+
+### Resultados
+
+Todas las ejecuciones realizadas (alrededor de 220) se encuentran registradas en el archivo `outputs.csv`. Este archivo tiene los resultados en el siguiente orden:
+
+- Número de iteraciones
+- Número de capas
+- Neuronas por capa
+- Grado de Confianza
+- Tasa de aprendiza ($\alpha$)
+- Mínimo del error promedio en entrenamiento
+- Máximo del error promedio en entrenamiento
+- Número de falsos positivos en el entrenamiento
+- Número de falsos negativos en el entrenamiento
+- Mínimo del error promedio en pruebas
+- Máximo del error promedio en pruebas
+- Número de falsos negativos en pruebas
+- Número de falsos positivos en pruebas
+
+
 
 Para cada experimento realizado, debe incluir tablas con:
+
 * Error promedio, mínimo y máximo en el conjunto de entrenamiento y prueba.
+
 * Cantidad de falsos positivos tanto en el conjunto de entrenamiento como de prueba. Un falso positivo en un clasificador binario es un ejemplo para el que la hipótesis incluye al ejemplo en la categoría clasificada, cuando no pertenece a ella en realidad.
+
 * Cantidad de falsos negativos tanto en el conjunto de entrenamiento como de prueba. Un falso negativo en un clasificador binario es un ejemplo para el que la hipótesis excluye de la categoría clasificada, cuando en realidad sí pertenece a ella. 
 
 

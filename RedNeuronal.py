@@ -259,7 +259,7 @@ def hipAproximation(trustGrade:float, NN:Layer,data, dataAnswer):
     return falsePos,falseNeg
 
 def main():
-    case = 2
+    case = 1
     if case ==1:
         #Se lee el CSV con pandas
         dfPlantas = pandas.read_csv('iris.csv')
@@ -322,50 +322,64 @@ def main():
         answerTrainingMulticlass = numpy.array(auxAnswerTraining)
         answerTestMulticlass = numpy.array(auxAnswerTest)
 
-        #Creamos la red neuronal
-        nnTest = fastNNCreation(4,3,[1,2,1])
-        alpha = 0.01
-        epoch = 5000
 
-        lossTrain,lossTest, bestNN = beginTraining(nnTest,epoch,alpha,dataTrainingSetosa,answerTrainingSetosa,dataTestSetosa,answerTestSetosa)
-        falsePosTrain,falseNegTrain = hipAproximation(0.90,bestNN,dataTrainingSetosa,answerTrainingSetosa)
-        falsePosTest,falseNegTest= hipAproximation(0.90,bestNN,dataTestSetosa,answerTestSetosa)
-        
-        meanLossTrain = [x/120 for x in lossTrain]
-        meanLossTest = [x/30 for x in lossTest]
+        alpha = 0.1
+        epoch = 100
+        capas = 6
+        capasNeurona = [5,4,2,5,4,3]
+        trustGrade = 0.65
+        folder_name = "MultyClass"
 
-        print(f"Max Mean Train Loss:{max(lossTrain)/120}")
-        print(f"Max Mean Test Loss:{max(lossTest)/30}")
-        print(f"Min Mean Train Loss:{min(lossTrain)/120}")
-        print(f"Min Mean Test Loss:{min(lossTest)/30}")
-        print(f"False Positive Train Count:{falsePosTrain}")
-        print(f"False Negative Train Count:{falseNegTrain}")
-        print(f"False Positive Test Count:{falsePosTest}")
-        print(f"False Negative Test Count:{falseNegTest}")
+        for i in  [250,500,1000]:
+            for j in [0.1,0.01,0.001]:
+                #for k in [0.9 , 0.8, 0.7, 0.6, 0.5]:
+                    #trustGrade = k
+                epoch = i
+                alpha = j
+                #Creamos la red neuronal
+                nnTest = fastNNCreation(4,capas,capasNeurona)
+                    
 
-        #plt.plot(lossTrain)
-        #plt.title(f"Train loss with alpha:{alpha}")
-        #plt.ylabel("Loss")
-        #plt.xlabel("Epoch")
-        #plt.show()
+                lossTrain,lossTest, bestNN = beginTraining(nnTest,epoch,alpha,dataTrainingMulticlass,answerTrainingMulticlass,dataTestMulticlass,answerTestMulticlass)
+                #falsePosTrain,falseNegTrain = hipAproximation(trustGrade,bestNN,dataTrainingSetosa,answerTrainingSetosa)
+                #falsePosTest,falseNegTest= hipAproximation(trustGrade,bestNN,dataTestSetosa,answerTestSetosa)
+                    
+                meanLossTrain = [x/120 for x in lossTrain]
+                meanLossTest = [x/30 for x in lossTest]
+                    
+                #print(f"Max Mean Train Loss:{max(lossTrain)/120}")
+                #print(f"Max Mean Test Loss:{max(lossTest)/30}")
+                #print(f"Min Mean Train Loss:{min(lossTrain)/120}")
+                #print(f"Min Mean Test Loss:{min(lossTest)/30}")
+                #print(f"False Positive Train Count:{falsePosTrain}")
+                #print(f"False Negative Train Count:{falseNegTrain}")
+                #print(f"False Positive Test Count:{falsePosTest}")
+                #print(f"False Negative Test Count:{falseNegTest}")
+                layerToString = "["
+                for elemen in capasNeurona:
+                    layerToString = layerToString + str(elemen) + "-"
+                layerToString = layerToString[:len(layerToString)-1]
+                layerToString = layerToString + "]"
 
-        #plt.plot(lossTest)
-        #plt.title(f"Test loss with alpha:{alpha}")
-        #plt.ylabel("Loss")
-        #plt.xlabel("Epoch")
-        #plt.show()
+                    #print(f"{epoch},{capas},{layerToString},{alpha},{trustGrade},{min(meanLossTrain)},{max(meanLossTrain)},{falsePosTrain},{falseNegTrain},{min(meanLossTest)},{max(meanLossTest)},{falseNegTest},{falsePosTest}",file=open(f"{folder_name}/outputs.csv", 'a'))
+                print(f"{epoch},{capas},{layerToString},{alpha},{min(meanLossTrain)},{max(meanLossTrain)},{min(meanLossTest)},{max(meanLossTest)}",file=open(f"{folder_name}/outputs.csv", 'a'))
 
-        plt.plot(meanLossTrain)
-        plt.title(f"Mean Train loss with alpha:{alpha}")
-        plt.ylabel("Mean Loss")
-        plt.xlabel("Epoch")
-        plt.show()
 
-        plt.plot(meanLossTest)
-        plt.title(f"Mean Test loss with alpha:{alpha}")
-        plt.ylabel("Mean Loss")
-        plt.xlabel("Epoch")
-        plt.show()
+                plt.plot(meanLossTrain)
+                plt.title(f"Mean Train loss with alpha:{alpha}")
+                plt.grid()
+                plt.ylabel("Mean Loss")
+                plt.xlabel("Epoch")
+                plt.savefig(f'{folder_name}/capas_{capas}_capasN_{capasNeurona}_mean_train_alpha_{alpha}_epoch_{epoch}_LR_{trustGrade}.png')
+                plt.close()
+
+                plt.plot(meanLossTest)
+                plt.title(f"Mean Test loss with alpha:{alpha}")
+                plt.grid()
+                plt.ylabel("Mean Loss")
+                plt.xlabel("Epoch")
+                plt.savefig(f'{folder_name}/capas_{capas}_capasN_{capasNeurona}_mean_test_alpha_{alpha}_epoch_{epoch}_LR_{trustGrade}.png')
+                plt.close()
 
     else:
         dfSpam = pandas.read_csv('spambase/spambase.csv',decimal=".",header=0)

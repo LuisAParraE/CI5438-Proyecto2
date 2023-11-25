@@ -184,7 +184,7 @@ Se puede observar que el error mínimo no varía por el grado de confianza para 
 
 ### Resultados
 
-Todas las ejecuciones realizadas (alrededor de 220) se encuentran registradas en el archivo `outputs.csv`. Este archivo tiene los resultados en el siguiente orden:
+Todas las ejecuciones realizadas (alrededor de 220) se encuentran registradas en el archivo `outputs.csv`, y puede ser visualizado en el siguiente archivo de Markdown: [outputs_tabla.md](outputs_tabla.md). Este archivo tiene los resultados en el siguiente orden:
 
 - Número de iteraciones
 - Número de capas
